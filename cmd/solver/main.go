@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_, err = g.SolveTokenInBlockRange(context.TODO(), common.HexToAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), 0, 11000000)
+	_, err = g.SolveTokenInBlockRange(context.TODO(), common.HexToAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), 0, 10800000)
 	if err != nil {
 		panic(err)
 	}

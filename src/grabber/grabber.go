@@ -77,7 +77,7 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 				Context: ctx,
 				Start:   br.start,
 				End:     &br.end,
-			}, []common.Address{token}, []common.Address{token})
+			}, []common.Address{token}, []common.Address{})
 			if err != nil {
 				return nil, err
 			}
@@ -100,6 +100,32 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					},
 				})
 			}
+			filter2, err := g.uniV2Factory.FilterPairCreated(&bind.FilterOpts{
+				Context: ctx,
+				Start:   br.start,
+				End:     &br.end,
+			}, []common.Address{}, []common.Address{token})
+			if err != nil {
+				return nil, err
+			}
+			for filter2.Next() {
+				ret = append(ret, &Pair{
+					Protocol: "Uniswap",
+					factory:  g.uniV2Factory,
+					Address:  filter2.Event.Pair,
+					Token0:   filter2.Event.Token0,
+					Token1:   filter2.Event.Token1,
+					CreatedEvent: &evts.PairCreated{
+						Block:            filter2.Event.Raw.BlockNumber,
+						TransactionIndex: filter2.Event.Raw.TxIndex,
+						LogIndex:         filter2.Event.Raw.Index,
+						Token0:           filter2.Event.Token0,
+						Token1:           filter2.Event.Token1,
+						Pair:             filter2.Event.Pair,
+						PairId:           filter2.Event.Arg3,
+					},
+				})
+			}
 			return ret, nil
 		})
 	}
@@ -109,7 +135,7 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 				Context: ctx,
 				Start:   br.start,
 				End:     &br.end,
-			}, []common.Address{token}, []common.Address{token})
+			}, []common.Address{token}, []common.Address{})
 			if err != nil {
 				return nil, err
 			}
@@ -129,6 +155,32 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 						Token1:           filter.Event.Token1,
 						Pair:             filter.Event.Pair,
 						PairId:           filter.Event.Arg3,
+					},
+				})
+			}
+			filter2, err := g.uniV2Factory.FilterPairCreated(&bind.FilterOpts{
+				Context: ctx,
+				Start:   br.start,
+				End:     &br.end,
+			}, []common.Address{}, []common.Address{token})
+			if err != nil {
+				return nil, err
+			}
+			for filter2.Next() {
+				ret = append(ret, &Pair{
+					Protocol: "SushiSwap",
+					factory:  g.sushiV2Factory,
+					Address:  filter2.Event.Pair,
+					Token0:   filter2.Event.Token0,
+					Token1:   filter2.Event.Token1,
+					CreatedEvent: &evts.PairCreated{
+						Block:            filter2.Event.Raw.BlockNumber,
+						TransactionIndex: filter2.Event.Raw.TxIndex,
+						LogIndex:         filter2.Event.Raw.Index,
+						Token0:           filter2.Event.Token0,
+						Token1:           filter2.Event.Token1,
+						Pair:             filter2.Event.Pair,
+						PairId:           filter2.Event.Arg3,
 					},
 				})
 			}
