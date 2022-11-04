@@ -21,4 +21,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	_ = g
 }
