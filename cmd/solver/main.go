@@ -2,8 +2,10 @@ package main
 
 import (
 	"UniswapV2Solver/src/grabber"
+	"context"
 	"os"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -21,5 +23,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_ = g
+	_, err = g.SolveTokenInBlockRange(context.TODO(), common.HexToAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), 0, 11000000)
+	if err != nil {
+		panic(err)
+	}
 }
