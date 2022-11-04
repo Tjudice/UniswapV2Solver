@@ -90,13 +90,15 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter.Event.Token0,
 					Token1:   filter.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Block:            filter.Event.Raw.BlockNumber,
-						TransactionIndex: filter.Event.Raw.TxIndex,
-						LogIndex:         filter.Event.Raw.Index,
-						Token0:           filter.Event.Token0,
-						Token1:           filter.Event.Token1,
-						Pair:             filter.Event.Pair,
-						PairId:           filter.Event.Arg3,
+						Token0: filter.Event.Token0,
+						Token1: filter.Event.Token1,
+						Pair:   filter.Event.Pair,
+						PairId: filter.Event.Arg3,
+						Raw: &evts.EventMetaData{
+							Block:            filter.Event.Raw.BlockNumber,
+							TransactionIndex: filter.Event.Raw.TxIndex,
+							LogIndex:         filter.Event.Raw.Index,
+						},
 					},
 				})
 			}
@@ -116,13 +118,15 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter2.Event.Token0,
 					Token1:   filter2.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Block:            filter2.Event.Raw.BlockNumber,
-						TransactionIndex: filter2.Event.Raw.TxIndex,
-						LogIndex:         filter2.Event.Raw.Index,
-						Token0:           filter2.Event.Token0,
-						Token1:           filter2.Event.Token1,
-						Pair:             filter2.Event.Pair,
-						PairId:           filter2.Event.Arg3,
+						Token0: filter2.Event.Token0,
+						Token1: filter2.Event.Token1,
+						Pair:   filter2.Event.Pair,
+						PairId: filter2.Event.Arg3,
+						Raw: &evts.EventMetaData{
+							Block:            filter2.Event.Raw.BlockNumber,
+							TransactionIndex: filter2.Event.Raw.TxIndex,
+							LogIndex:         filter2.Event.Raw.Index,
+						},
 					},
 				})
 			}
@@ -148,13 +152,15 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter.Event.Token0,
 					Token1:   filter.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Block:            filter.Event.Raw.BlockNumber,
-						TransactionIndex: filter.Event.Raw.TxIndex,
-						LogIndex:         filter.Event.Raw.Index,
-						Token0:           filter.Event.Token0,
-						Token1:           filter.Event.Token1,
-						Pair:             filter.Event.Pair,
-						PairId:           filter.Event.Arg3,
+						Token0: filter.Event.Token0,
+						Token1: filter.Event.Token1,
+						Pair:   filter.Event.Pair,
+						PairId: filter.Event.Arg3,
+						Raw: &evts.EventMetaData{
+							Block:            filter.Event.Raw.BlockNumber,
+							TransactionIndex: filter.Event.Raw.TxIndex,
+							LogIndex:         filter.Event.Raw.Index,
+						},
 					},
 				})
 			}
@@ -174,13 +180,15 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter2.Event.Token0,
 					Token1:   filter2.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Block:            filter2.Event.Raw.BlockNumber,
-						TransactionIndex: filter2.Event.Raw.TxIndex,
-						LogIndex:         filter2.Event.Raw.Index,
-						Token0:           filter2.Event.Token0,
-						Token1:           filter2.Event.Token1,
-						Pair:             filter2.Event.Pair,
-						PairId:           filter2.Event.Arg3,
+						Token0: filter2.Event.Token0,
+						Token1: filter2.Event.Token1,
+						Pair:   filter2.Event.Pair,
+						PairId: filter2.Event.Arg3,
+						Raw: &evts.EventMetaData{
+							Block:            filter2.Event.Raw.BlockNumber,
+							TransactionIndex: filter2.Event.Raw.TxIndex,
+							LogIndex:         filter2.Event.Raw.Index,
+						},
 					},
 				})
 			}
