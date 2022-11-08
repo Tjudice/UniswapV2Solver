@@ -10,3 +10,5 @@ const (
 var UniswapV2FactoryAddress = common.HexToAddress(UniswapV2Factory)
 
 var SushiV2FactoryAddress = common.HexToAddress(SushiV2Factory)
+
+var ZeroAddress = common.HexToAddress("0x0000000000000000000000000000000000000000")
