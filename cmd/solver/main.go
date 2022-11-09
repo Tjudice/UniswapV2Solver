@@ -1,29 +1,31 @@
 package main
 
 import (
+	"UniswapV2Solver/src/config"
+	"UniswapV2Solver/src/data/arango"
 	"UniswapV2Solver/src/grabber"
 	"context"
-	"os"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var Config struct {
-	RPC_URL string
-}
-
 func main() {
-	Config.RPC_URL = os.Getenv("RPC_URL")
-	cl, err := ethclient.Dial(Config.RPC_URL)
+	c, _, err := config.Load()
 	if err != nil {
 		panic(err)
 	}
-	g, err := grabber.NewGrabber(cl)
+	arangoAuth := c.User + ":" + c.Password
+	db, err := arango.NewDatabase(c.Host, arangoAuth, "UniswapV2")
 	if err != nil {
 		panic(err)
 	}
-	_, err = g.SolveTokenInBlockRange(context.TODO(), common.HexToAddress("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), 0, 10800000)
+	cl, err := ethclient.Dial(c.Rpc)
+	if err != nil {
+		panic(err)
+	}
+	runner := grabber.NewStageRunner(db, cl, 5000, 10)
+	runner.AddStage(grabber.NewStage1(db))
+	err = runner.RunStages(context.TODO())
 	if err != nil {
 		panic(err)
 	}

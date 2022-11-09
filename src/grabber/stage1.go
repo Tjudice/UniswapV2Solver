@@ -24,8 +24,11 @@ import (
 // Stage2 Must be run after Stage1
 // Must log progress so stages can pick up where left off
 type Stage1 struct {
-	CurrentBlock int
-	db           *arango.DB
+	db *arango.DB
+}
+
+func NewStage1(db *arango.DB) *Stage1 {
+	return &Stage1{db: db}
 }
 
 func (s *Stage1) Name() string {
@@ -37,7 +40,11 @@ func (s *Stage1) StageIndex() int {
 }
 
 func (s *Stage1) GetLastUpdatedBlock(ctx context.Context) (int, error) {
-	return GetLastBlockForStage(ctx, s.db, 1)
+	blk, err := GetLastBlockForStage(ctx, s.db, 1)
+	if err != nil {
+		blk = int(meta.UniswapV2DeployBlock)
+	}
+	return blk, nil
 }
 
 func (s *Stage1) GetAddresses(ctx context.Context) ([][]common.Address, error) {
@@ -45,7 +52,7 @@ func (s *Stage1) GetAddresses(ctx context.Context) ([][]common.Address, error) {
 }
 
 func (s *Stage1) RunStage(ctx context.Context, cl *ethclient.Client, o *StageOptions) error {
-	bh := data.NewBatchHandler(ctx, s.db.PairCreatedEvent, 500)
+	bh := data.NewBatchHandler(ctx, s.db.PairCreatedEvent, 1000)
 	defer bh.Close()
 	caller, err := uniswap.NewUniswapV2Factory(meta.UniswapV2FactoryAddress, cl)
 	if err != nil {
@@ -76,6 +83,12 @@ func (s *Stage1) RunStage(ctx context.Context, cl *ethclient.Client, o *StageOpt
 		if err != nil {
 			return err
 		}
+	}
+	if o.BlockEnd < meta.SushiswapV2DeployBlock {
+		return nil
+	}
+	if o.BlockStart < meta.SushiswapV2DeployBlock {
+		o.BlockStart = meta.SushiswapV2DeployBlock
 	}
 	caller, err = uniswap.NewUniswapV2Factory(meta.SushiV2FactoryAddress, cl)
 	if err != nil {

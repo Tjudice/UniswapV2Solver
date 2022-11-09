@@ -39,11 +39,13 @@ type Stage interface {
 	RunStage(ctx context.Context, cl *ethclient.Client, o *StageOptions) error
 }
 
-func NewStageRunner(db *arango.DB, cl *ethclient.Client) *Runner {
+func NewStageRunner(db *arango.DB, cl *ethclient.Client, maxBlockRange int, maxRetries int) *Runner {
 	return &Runner{
-		db:     db,
-		cl:     cl,
-		stages: make(map[int][]Stage),
+		db:            db,
+		cl:            cl,
+		stages:        make(map[int][]Stage),
+		maxBlockRange: maxBlockRange,
+		maxRetries:    maxRetries,
 	}
 }
 
@@ -82,6 +84,9 @@ func (r *Runner) RunStages(ctx context.Context) error {
 			wg.SetLimit(12)
 			successfulBlocks := []int{}
 			mut := sync.Mutex{}
+			if len(addrs) == 0 {
+				addrs = [][]common.Address{{}}
+			}
 			for _, addr := range addrs {
 				for _, opt := range stageOpts {
 					optFixed := &StageOptions{
@@ -136,6 +141,15 @@ func (r *Runner) RunStages(ctx context.Context) error {
 					if err != nil {
 						return err
 					}
+				}
+			} else {
+				_, err := r.db.StageProgress.C().CreateDocument(ctx, &data.StageProgress{
+					Stage: stage.StageIndex(),
+					Block: int(currBlock),
+					Time:  time.Now(),
+				})
+				if err != nil {
+					return err
 				}
 			}
 		}
