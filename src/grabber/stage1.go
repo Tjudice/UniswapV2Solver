@@ -13,14 +13,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-// type Stage interface {
-// 	GetLastUpdatedBlock(ctx context.Context) (int, error)
-// 	RunStage(ctx context.Context, cl *ethclient.Client, o *StageOptions) error
-// 	Name() string
-// 	StageIndex() int
-// 	Options() *RunOpts
-// }
-
 // Filter for all PairCreated events
 // Stage2 Must be run after Stage1
 // Must log progress so stages can pick up where left off

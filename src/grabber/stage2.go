@@ -32,11 +32,11 @@ func NewStage2(db *arango.DB) *Stage2 {
 }
 
 func (s *Stage2) Name() string {
-	return "PairCreatedEvents"
+	return "PoolEvents"
 }
 
 func (s *Stage2) StageIndex() int {
-	return 1
+	return 2
 }
 
 func (s *Stage2) GetLastUpdatedBlock(ctx context.Context) (int, error) {
