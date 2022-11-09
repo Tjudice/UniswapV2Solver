@@ -49,7 +49,7 @@ type DB struct {
 
 	// Stages
 
-	StageFinished *arango.Collection[*data.StageFinished]
+	StageProgress *arango.Collection[*data.StageProgress]
 }
 
 func (d *DB) D() driver.Database {
@@ -118,7 +118,7 @@ func NewDatabase(host string, auth string, dbName string) (*DB, error) {
 	}
 
 	// Stages
-	o.StageFinished, err = arango.CollectionFromDocument(ctx, o.d, &data.StageFinished{})
+	o.StageProgress, err = arango.CollectionFromDocument(ctx, o.d, &data.StageProgress{})
 	if err != nil {
 		return nil, err
 	}
