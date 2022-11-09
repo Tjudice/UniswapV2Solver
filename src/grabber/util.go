@@ -19,5 +19,5 @@ const LastStageBlockQuery = `
 		filter doc.stage == %d
 		sort doc.block desc
 		limit 1
-		let ret = doc
+		let ret = doc.block
 `

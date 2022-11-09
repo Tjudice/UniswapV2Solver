@@ -6,6 +6,7 @@ import (
 	"UniswapV2Solver/src/data/arango"
 	"UniswapV2Solver/src/meta"
 	"context"
+	"log"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -41,6 +42,7 @@ func (s *Stage1) StageIndex() int {
 
 func (s *Stage1) GetLastUpdatedBlock(ctx context.Context) (int, error) {
 	blk, err := GetLastBlockForStage(ctx, s.db, 1)
+	log.Println(err)
 	if err != nil {
 		blk = int(meta.UniswapV2DeployBlock)
 	}
