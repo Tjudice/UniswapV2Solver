@@ -1,29 +1,28 @@
 package evts
 
 import (
-	"UniswapV2Solver/generated/uniswap"
 	"math/big"
 	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type EventMetaData struct {
-	Block            uint64         `json:"block"`
-	TransactionIndex uint           `json:"transaction_index"`
-	LogIndex         uint           `json:"log_index"`
-	Address          common.Address `json:"address"`
-	BlockTimestamp   time.Time      `json:"block_timestamp"`
+	Block            uint64    `json:"block"`
+	Transaction      string    `json:"transaction"`
+	TransactionIndex uint      `json:"transaction_index"`
+	LogIndex         uint      `json:"log_index"`
+	Address          string    `json:"address"`
+	BlockTimestamp   time.Time `json:"block_timestamp"`
 }
 
 // event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 type PairCreated struct {
-	Token0 common.Address `json:"token0"`
-	Token1 common.Address `json:"token1"`
-	Pair   common.Address `json:"pair"`
-	PairId *big.Int       `json:"pair_id"`
+	Token0 string   `json:"token0"`
+	Token1 string   `json:"token1"`
+	Pair   string   `json:"pair"`
+	PairId *big.Int `json:"pair_id"`
 
 	Raw *EventMetaData `json:"raw"`
 }
@@ -42,91 +41,11 @@ func (e *PairCreated) MetaData() *bind.MetaData {
 	}
 }
 
-type PairCreatedIterator struct {
-	Event *PairCreated
-	event string
-	bind  *ContractGroupFilterer
-	logs  chan types.Log
-	fail  error
-	done  bool
-}
-
-func (it *PairCreatedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(PairCreated)
-			uniEvt := new(uniswap.UniswapV2FactoryPairCreated)
-			if err := it.bind.UnpackLog(uniEvt, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Token0 = uniEvt.Token0
-			it.Event.Token1 = uniEvt.Token1
-			it.Event.Pair = uniEvt.Pair
-			it.Event.PairId = uniEvt.Arg3
-			it.Event.Raw = &EventMetaData{
-				Block:            log.BlockNumber,
-				TransactionIndex: log.TxIndex,
-				LogIndex:         log.Index,
-				Address:          log.Address,
-			}
-			return true
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(PairCreated)
-		uniEvt := new(uniswap.UniswapV2FactoryPairCreated)
-		if err := it.bind.UnpackLog(uniEvt, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Token0 = uniEvt.Token0
-		it.Event.Token1 = uniEvt.Token1
-		it.Event.Pair = uniEvt.Pair
-		it.Event.PairId = uniEvt.Arg3
-		it.Event.Raw = &EventMetaData{
-			Block:            log.BlockNumber,
-			TransactionIndex: log.TxIndex,
-			LogIndex:         log.Index,
-			Address:          log.Address,
-		}
-		return true
-	}
-}
-
-func (e *PairCreated) FilterPairCreated(filterer *ContractGroupFilterer, opts *bind.FilterOpts, contracts []common.Address, token0 []common.Address, token1 []common.Address) (*PairCreatedIterator, error) {
-
-	var token0Rule []interface{}
-	for _, token0Item := range token0 {
-		token0Rule = append(token0Rule, token0Item)
-	}
-	var token1Rule []interface{}
-	for _, token1Item := range token1 {
-		token1Rule = append(token1Rule, token1Item)
-	}
-
-	logs, err := filterer.FilterLogs(opts, "PairCreated", contracts, token0Rule, token1Rule)
-	if err != nil {
-		return nil, err
-	}
-	return &PairCreatedIterator{contract: _UniswapV2Factory.contract, event: "PairCreated", logs: logs}, nil
-}
-
 // event Mint(address indexed sender, uint amount0, uint amount1);
 type Mint struct {
-	Sender  common.Address `json:"sender"`
-	Amount0 *big.Int       `json:"amount0"`
-	Amount1 *big.Int       `json:"amount1"`
+	Sender  string   `json:"sender"`
+	Amount0 *big.Int `json:"amount0"`
+	Amount1 *big.Int `json:"amount1"`
 
 	Raw *EventMetaData `json:"raw"`
 }

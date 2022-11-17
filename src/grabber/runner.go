@@ -34,7 +34,7 @@ type StageOptions struct {
 type Stage interface {
 	Name() string
 	StageIndex() int
-	GetAddresses(ctx context.Context) ([][]common.Address, error)
+	GetAddresses(ctx context.Context, blockMax int) ([][]common.Address, error)
 	GetLastUpdatedBlock(ctx context.Context) (int, error)
 	RunStage(ctx context.Context, cl *ethclient.Client, o *StageOptions) error
 }
@@ -72,23 +72,26 @@ func (r *Runner) RunStages(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		log.Println(start)
 		log.Info().Int("Stage Number", s).Str("Start Time", time.Now().String()).Int("Start Block", start).Msg("Starting Stage")
 		for _, stage := range r.stages[s] {
 			log.Info().Str("Stage Name", stage.Name()).Msg("Starting Stage")
 			stageOpts := r.divideStageBlocks(start, int(currBlock))
-			addrs, err := stage.GetAddresses(ctx)
-			if err != nil {
-				return err
-			}
+
 			wg := errgroup.Group{}
-			wg.SetLimit(12)
+			wg.SetLimit(8)
 			successfulBlocks := []int{}
 			mut := sync.Mutex{}
-			if len(addrs) == 0 {
-				addrs = [][]common.Address{{}}
-			}
-			for _, addr := range addrs {
-				for _, opt := range stageOpts {
+
+			for _, opt := range stageOpts {
+				addrs, err := stage.GetAddresses(ctx, int(opt.BlockEnd))
+				if err != nil {
+					return err
+				}
+				if len(addrs) == 0 {
+					addrs = [][]common.Address{{}}
+				}
+				for _, addr := range addrs {
 					optFixed := &StageOptions{
 						BlockStart: opt.BlockStart,
 						BlockEnd:   opt.BlockEnd,
@@ -117,6 +120,7 @@ func (r *Runner) RunStages(ctx context.Context) error {
 					})
 				}
 			}
+
 			err = wg.Wait()
 			sort.SliceStable(successfulBlocks, func(i, j int) bool {
 				return successfulBlocks[i] < successfulBlocks[j]
@@ -153,20 +157,13 @@ func (r *Runner) RunStages(ctx context.Context) error {
 				}
 			}
 		}
-		return nil
 	}
 	return nil
 }
 
 func (r *Runner) divideStageBlocks(start, end int) []*StageOptions {
 	var stageOpts []*StageOptions
-	if end-start < r.maxBlockRange {
-		stageOpts = append(stageOpts, &StageOptions{
-			BlockStart: uint64(start),
-			BlockEnd:   uint64(end),
-		})
-		return stageOpts
-	}
+
 	for start < end {
 		if end-start < r.maxBlockRange {
 			stageOpts = append(stageOpts, &StageOptions{

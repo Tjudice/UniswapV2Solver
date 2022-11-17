@@ -43,9 +43,9 @@ type Pool struct {
 func NewPool(evt *evts.PairCreated) *Pool {
 	return &Pool{
 		PairId:               int(evt.PairId.Int64()),
-		Token0:               evt.Token0,
-		Token1:               evt.Token1,
-		PoolAddress:          evt.Pair,
+		Token0:               common.HexToAddress(evt.Token0),
+		Token1:               common.HexToAddress(evt.Token1),
+		PoolAddress:          common.HexToAddress(evt.Pair),
 		Reserve0:             big.NewInt(0),
 		Reserve1:             big.NewInt(0),
 		Balance0:             big.NewInt(0),
@@ -89,7 +89,7 @@ func (p *Pool) Mint(e *evts.Mint) error {
 			liq = liq1
 		}
 	}
-	p.Positions.Mint(e.Sender, liq)
+	p.Positions.Mint(common.HexToAddress(e.Sender), liq)
 	return nil
 }
 

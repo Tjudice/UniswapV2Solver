@@ -201,7 +201,12 @@ type SyncEvent struct {
 	Reserve0 string `json:"reserve0"`
 	Reserve1 string `json:"reserve1"`
 
-	EventMetaData
+	Block            uint64    `json:"block"`
+	Transaction      string    `json:"transaction"`
+	TransactionIndex uint      `json:"transaction_index"`
+	LogIndex         uint      `json:"log_index"`
+	Address          string    `json:"address"`
+	BlockTimestamp   time.Time `json:"block_timestamp"`
 }
 
 func (a *SyncEvent) Key() string {

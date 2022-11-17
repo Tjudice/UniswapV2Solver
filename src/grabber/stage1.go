@@ -41,7 +41,7 @@ func (s *Stage1) GetLastUpdatedBlock(ctx context.Context) (int, error) {
 	return blk, nil
 }
 
-func (s *Stage1) GetAddresses(ctx context.Context) ([][]common.Address, error) {
+func (s *Stage1) GetAddresses(ctx context.Context, blockMax int) ([][]common.Address, error) {
 	return [][]common.Address{}, nil
 }
 

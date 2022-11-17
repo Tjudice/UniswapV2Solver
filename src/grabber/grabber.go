@@ -90,9 +90,9 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter.Event.Token0,
 					Token1:   filter.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Token0: filter.Event.Token0,
-						Token1: filter.Event.Token1,
-						Pair:   filter.Event.Pair,
+						Token0: filter.Event.Token0.Hex(),
+						Token1: filter.Event.Token1.Hex(),
+						Pair:   filter.Event.Pair.Hex(),
 						PairId: filter.Event.Arg3,
 						Raw: &evts.EventMetaData{
 							Block:            filter.Event.Raw.BlockNumber,
@@ -118,9 +118,9 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter2.Event.Token0,
 					Token1:   filter2.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Token0: filter2.Event.Token0,
-						Token1: filter2.Event.Token1,
-						Pair:   filter2.Event.Pair,
+						Token0: filter2.Event.Token0.Hex(),
+						Token1: filter2.Event.Token1.Hex(),
+						Pair:   filter2.Event.Pair.Hex(),
 						PairId: filter2.Event.Arg3,
 						Raw: &evts.EventMetaData{
 							Block:            filter2.Event.Raw.BlockNumber,
@@ -152,9 +152,9 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter.Event.Token0,
 					Token1:   filter.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Token0: filter.Event.Token0,
-						Token1: filter.Event.Token1,
-						Pair:   filter.Event.Pair,
+						Token0: filter.Event.Token0.Hex(),
+						Token1: filter.Event.Token1.Hex(),
+						Pair:   filter.Event.Pair.Hex(),
 						PairId: filter.Event.Arg3,
 						Raw: &evts.EventMetaData{
 							Block:            filter.Event.Raw.BlockNumber,
@@ -180,9 +180,9 @@ func (g *Grabber) GetPairs(ctx context.Context, token common.Address, end uint64
 					Token0:   filter2.Event.Token0,
 					Token1:   filter2.Event.Token1,
 					CreatedEvent: &evts.PairCreated{
-						Token0: filter2.Event.Token0,
-						Token1: filter2.Event.Token1,
-						Pair:   filter2.Event.Pair,
+						Token0: filter2.Event.Token0.Hex(),
+						Token1: filter2.Event.Token1.Hex(),
+						Pair:   filter2.Event.Pair.Hex(),
 						PairId: filter2.Event.Arg3,
 						Raw: &evts.EventMetaData{
 							Block:            filter2.Event.Raw.BlockNumber,

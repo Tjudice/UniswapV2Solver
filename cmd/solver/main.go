@@ -23,8 +23,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	runner := grabber.NewStageRunner(db, cl, 5000, 10)
+	runner := grabber.NewStageRunner(db, cl, 1000, 10)
 	runner.AddStage(grabber.NewStage1(db))
+	runner.AddStage(grabber.NewStage2(db))
 	err = runner.RunStages(context.TODO())
 	if err != nil {
 		panic(err)
