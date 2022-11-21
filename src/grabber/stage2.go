@@ -72,6 +72,7 @@ func (s *Stage2) GetAddresses(ctx context.Context, blockMax int) ([][]common.Add
 	for i := 0; i < numDivisions; i++ {
 		if i != numDivisions-1 {
 			ret[i] = addrs[i*addrSize : (i+1)*addrSize]
+			continue
 		}
 		ret[i] = addrs[i*addrSize:]
 	}
@@ -79,7 +80,7 @@ func (s *Stage2) GetAddresses(ctx context.Context, blockMax int) ([][]common.Add
 }
 
 func (s *Stage2) RunStage(ctx context.Context, cl *ethclient.Client, o *StageOptions) error {
-	bh := data.NewBatchHandler(ctx, s.db.SyncEvent, 100)
+	bh := data.NewBatchHandler(ctx, s.db.SyncEvent, 1000)
 	defer bh.Close()
 	filterer, err := evts.NewUniswapContractGroupFilterer(cl)
 	if err != nil {

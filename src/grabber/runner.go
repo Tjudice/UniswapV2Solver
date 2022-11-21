@@ -79,7 +79,7 @@ func (r *Runner) RunStages(ctx context.Context) error {
 			stageOpts := r.divideStageBlocks(start, int(currBlock))
 
 			wg := errgroup.Group{}
-			wg.SetLimit(8)
+			wg.SetLimit(12)
 			successfulBlocks := []int{}
 			mut := sync.Mutex{}
 

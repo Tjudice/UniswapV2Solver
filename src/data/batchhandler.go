@@ -90,7 +90,7 @@ func (b *BatchHandler[T]) Flush() error {
 	}
 	b.numDocs = 0
 	if eSlice.FirstNonNil() == nil {
-		log.Debug().Int("add", len(docs)).Int("replace", 0).Str("collection", b.collection.Name()).Msg("BatchHandler")
+		// log.Debug().Int("add", len(docs)).Int("replace", 0).Str("collection", b.collection.Name()).Msg("BatchHandler")
 		return nil
 	}
 	errDocs := make([]T, len(eSlice))
@@ -112,7 +112,7 @@ func (b *BatchHandler[T]) Flush() error {
 		return BatchError{Errors: eSlice, Collection: b.collection.Name()}
 	}
 
-	log.Debug().Int("add", len(docs)-errs).Int("replace", errs).Str("collection", b.collection.Name()).Msg("BatchHandler")
+	// log.Debug().Int("add", len(docs)-errs).Int("replace", errs).Str("collection", b.collection.Name()).Msg("BatchHandler")
 
 	return err
 }
