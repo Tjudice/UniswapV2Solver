@@ -3,12 +3,13 @@ package main
 import (
 	"UniswapV2Solver/src/config"
 	"UniswapV2Solver/src/data/arango"
-	"UniswapV2Solver/src/player"
+	"UniswapV2Solver/src/grabber"
 	"context"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+// TODO: Add Stage for Token Information
 func main() {
 	c, _, err := config.Load()
 	if err != nil {
@@ -23,13 +24,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ctx := context.TODO()
-	player := player.NewPlayer(db, cl)
-	err = player.LoadAllPools(ctx)
-	if err != nil {
-		panic(err)
-	}
-	err = player.PlayEventRange(context.TODO(), 11000000, 11005000, nil)
+	runner := grabber.NewStageRunner(db, cl, 1000, 10)
+	runner.AddStage(grabber.NewStage1(db))
+	runner.AddStage(grabber.NewStage2(db))
+	err = runner.RunStages(context.TODO())
 	if err != nil {
 		panic(err)
 	}

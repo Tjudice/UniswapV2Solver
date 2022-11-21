@@ -6,6 +6,7 @@ import (
 
 	"gfx.cafe/open/arango"
 	"github.com/arangodb/go-driver"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type StageProgress struct {
@@ -30,6 +31,40 @@ func (a *StageProgress) Collection() (string, []driver.Index) {
 			SetType:   driver.PersistentIndex,
 			SetFields: []string{"stage"},
 			SetName:   "Stage",
+			SetUnique: false,
+		},
+	}
+}
+
+type Token struct {
+	Address  common.Address `json:"address"`
+	Symbol   string         `json:"symbol"`
+	Name     string         `json:"name"`
+	Decimals uint8          `json:"decimals"`
+}
+
+func (a *Token) Key() string {
+	return a.Address.Hex()
+}
+
+func (a *Token) Collection() (string, []driver.Index) {
+	return "Token", []driver.Index{
+		&arango.IDX{
+			SetType:   driver.PersistentIndex,
+			SetFields: []string{"address"},
+			SetName:   "Address",
+			SetUnique: false,
+		},
+		&arango.IDX{
+			SetType:   driver.PersistentIndex,
+			SetFields: []string{"name"},
+			SetName:   "Name",
+			SetUnique: false,
+		},
+		&arango.IDX{
+			SetType:   driver.PersistentIndex,
+			SetFields: []string{"symbol"},
+			SetName:   "Symbol",
 			SetUnique: false,
 		},
 	}

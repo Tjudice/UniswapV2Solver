@@ -95,6 +95,30 @@ func (p *Pool) oneForZero(token1Amount *big.Int) *big.Int {
 	return numerator.Div(numerator, big.NewInt(997))
 }
 
+func (p *Pool) Price0() *big.Int {
+	if p.Reserve0.Cmp(big.NewInt(0)) == 0 {
+		return big.NewInt(0)
+	}
+	return new(big.Int).Div(p.Reserve1, p.Reserve0)
+}
+
+func (p *Pool) Price1() *big.Int {
+	if p.Reserve1.Cmp(big.NewInt(0)) == 0 {
+		return big.NewInt(0)
+	}
+	return new(big.Int).Div(p.Reserve0, p.Reserve1)
+}
+
+func (p *Pool) PriceForToken(token common.Address) *big.Int {
+	if token == p.Token0.Address {
+		return p.Price0()
+	}
+	if token == p.Token1.Address {
+		return p.Price1()
+	}
+	return big.NewInt(0)
+}
+
 func (p *Pool) Copy() *Pool {
 	return &Pool{
 		PairId:           big.NewInt(0).Set(p.PairId),

@@ -11,6 +11,7 @@ import (
 
 type EventMetaData struct {
 	Block            uint64         `json:"block"`
+	Transaction      string         `json:"transaction"`
 	TransactionIndex uint           `json:"transaction_index"`
 	LogIndex         uint           `json:"log_index"`
 	Address          common.Address `json:"address"`
