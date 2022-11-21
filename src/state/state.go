@@ -17,6 +17,18 @@ type UniswapV2State struct {
 	// Data
 	Pools  map[common.Address]*Pool
 	Tokens map[common.Address]*Token
+
+	Block            int
+	TransactionIndex int
+	LogIndex         int
+}
+
+func NewState(cl *ethclient.Client) *UniswapV2State {
+	return &UniswapV2State{
+		cl:     cl,
+		Pools:  map[common.Address]*Pool{},
+		Tokens: map[common.Address]*Token{},
+	}
 }
 
 func (s *UniswapV2State) Update(evt evts.UniV2Event) error {
@@ -51,6 +63,7 @@ func (s *UniswapV2State) Update(evt evts.UniV2Event) error {
 	default:
 		return fmt.Errorf("invalid event type")
 	}
+	s.Block, s.TransactionIndex, s.LogIndex = evt.EventIndex()
 	return nil
 }
 
@@ -72,4 +85,13 @@ func (s *UniswapV2State) GetPool(address common.Address) (*Pool, error) {
 		return pool, nil
 	}
 	return nil, fmt.Errorf("pool not found")
+}
+
+func (s *UniswapV2State) PrintStateSummary() {
+	fmt.Printf("============= State ==============\n")
+	fmt.Printf("Block: %d\n", s.Block)
+	fmt.Printf("Transaction Index: %d\n", s.TransactionIndex)
+	fmt.Printf("Log Index: %d\n", s.LogIndex)
+	fmt.Printf("Pools: %d\n", len(s.Pools))
+	fmt.Printf("Tokens: %d\n", len(s.Tokens))
 }

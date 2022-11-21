@@ -26,5 +26,4 @@ type TokenAmount struct {
 }
 
 func (t *Token) Update() {
-
 }

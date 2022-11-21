@@ -1,6 +1,7 @@
 package state
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -26,7 +27,51 @@ func (p *Pool) Update(reserve0, reserve1 *big.Int, block int) {
 	p.Token1.Update()
 }
 
-func (p *Pool) SwapZeroForOneOutput(token0Amount *big.Int) *big.Int {
+func (p *Pool) Swap(amt *TokenAmount) (*TokenAmount, error) {
+	if amt.Amount.Cmp(big.NewInt(0)) <= 0 {
+		return nil, fmt.Errorf("insufficient input amount")
+	}
+	if amt.Token.Address == p.Token0.Address {
+		ret := p.zeroForOne(amt.Amount)
+		p.Reserve0.Add(p.Reserve0, amt.Amount)
+		p.Reserve1.Sub(p.Reserve1, ret)
+		return &TokenAmount{
+			Token:  p.Token1,
+			Amount: ret,
+		}, nil
+	}
+	if amt.Token.Address == p.Token1.Address {
+		ret := p.oneForZero(amt.Amount)
+		p.Reserve1.Add(p.Reserve1, amt.Amount)
+		p.Reserve0.Sub(p.Reserve0, ret)
+		return &TokenAmount{
+			Token:  p.Token0,
+			Amount: ret,
+		}, nil
+	}
+	return nil, fmt.Errorf("token not in pool")
+}
+
+func (p *Pool) TestSwap(amt *TokenAmount) (*TokenAmount, error) {
+	if amt.Amount.Cmp(big.NewInt(0)) <= 0 {
+		return nil, fmt.Errorf("insufficient input amount")
+	}
+	if amt.Token.Address == p.Token0.Address {
+		return &TokenAmount{
+			Token:  p.Token1,
+			Amount: p.zeroForOne(amt.Amount),
+		}, nil
+	}
+	if amt.Token.Address == p.Token1.Address {
+		return &TokenAmount{
+			Token:  p.Token0,
+			Amount: p.oneForZero(amt.Amount),
+		}, nil
+	}
+	return nil, fmt.Errorf("token not in pool")
+}
+
+func (p *Pool) zeroForOne(token0Amount *big.Int) *big.Int {
 	oneThousand := big.NewInt(1000)
 	k := new(big.Int).Mul(oneThousand, oneThousand)
 	k.Mul(k, big.NewInt(0).Mul(p.Reserve0, p.Reserve1))
@@ -38,7 +83,7 @@ func (p *Pool) SwapZeroForOneOutput(token0Amount *big.Int) *big.Int {
 	return numerator.Div(numerator, big.NewInt(997))
 }
 
-func (p *Pool) OneForZeroOutput(token1Amount *big.Int) *big.Int {
+func (p *Pool) oneForZero(token1Amount *big.Int) *big.Int {
 	oneThousand := big.NewInt(1000)
 	k := new(big.Int).Mul(oneThousand, oneThousand)
 	k.Mul(k, big.NewInt(0).Mul(p.Reserve0, p.Reserve1))
@@ -48,4 +93,17 @@ func (p *Pool) OneForZeroOutput(token1Amount *big.Int) *big.Int {
 	numerator := new(big.Int).Div(k, z)
 	numerator.Sub(numerator, new(big.Int).Mul(oneThousand, p.Reserve0))
 	return numerator.Div(numerator, big.NewInt(997))
+}
+
+func (p *Pool) Copy() *Pool {
+	return &Pool{
+		PairId:           big.NewInt(0).Set(p.PairId),
+		ContractAddress:  p.ContractAddress,
+		Token0:           p.Token0,
+		Token1:           p.Token1,
+		Reserve0:         big.NewInt(0).Set(p.Reserve0),
+		Reserve1:         big.NewInt(0).Set(p.Reserve1),
+		K:                big.NewInt(0).Set(p.K),
+		LastUpdatedBlock: p.LastUpdatedBlock,
+	}
 }
