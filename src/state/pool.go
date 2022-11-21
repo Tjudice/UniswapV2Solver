@@ -95,6 +95,30 @@ func (p *Pool) oneForZero(token1Amount *big.Int) *big.Int {
 	return numerator.Div(numerator, big.NewInt(997))
 }
 
+// price = reserve1Next/reserve0Next
+// price = (reserve1 + token1Out)/(reserve0 + token0In)
+// price * (reserve0 + token0In) = reserve1 + token1Out
+// price * reserve0 + price * token0In = reserve1 + token1Out
+// token0In = (reserve1 + token1Out - price * reserve0) / price
+// ((reserve0 + token0In) * 1000 - 3 * token0In) * ((reserve1 + token1Out) * 1000 - 3 * token0Out) = k
+// b = (reserve1 + token1Out)/price
+// c = (reserve1 + token1Out - price * reserve0) / price
+func (p *Pool) MaxToken0ToPrice(price *big.Int) (in *TokenAmount, out *TokenAmount) {
+	oneThousand := big.NewInt(1000)
+	k := new(big.Int).Mul(oneThousand, oneThousand)
+	k.Mul(k, big.NewInt(0).Mul(p.Reserve0, p.Reserve1))
+	return nil, nil
+}
+
+// price = reserve0Next/reserve1Next
+// price = (reserve0 + token0Out)/(reserve1 + token1In)
+// price * (reserve1 + token1In) = reserve0 + token0Out
+// price * reserve1 + price * token1In = reserve0 + token0Out
+// token1In = (reserve0 + token0Out - price * reserve1) / price
+func (p *Pool) MaxToken1ToPrice(price *big.Int) (in *TokenAmount, out *TokenAmount) {
+	return nil, nil
+}
+
 func (p *Pool) Price0() *big.Int {
 	if p.Reserve0.Cmp(big.NewInt(0)) == 0 {
 		return big.NewInt(0)

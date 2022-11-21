@@ -86,6 +86,7 @@ func (s *UniswapV2State) pairCreated(v *evts.PairCreated) error {
 	pair := common.HexToAddress(v.Pair)
 	s.mut.Lock()
 	if _, ok := s.Pools[pair]; ok {
+		s.mut.Unlock()
 		return nil
 	}
 	s.mut.Unlock()
