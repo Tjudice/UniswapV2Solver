@@ -155,3 +155,5 @@ func (p *Pool) Copy() *Pool {
 		LastUpdatedBlock: p.LastUpdatedBlock,
 	}
 }
+
+// func (p *Pool)
