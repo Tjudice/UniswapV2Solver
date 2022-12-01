@@ -1,7 +1,6 @@
 package player
 
 import (
-	"UniswapV2Solver/src/data/arango"
 	"UniswapV2Solver/src/evts"
 	"UniswapV2Solver/src/state"
 	"context"

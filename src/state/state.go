@@ -1,7 +1,6 @@
 package state
 
 import (
-	"UniswapV2Solver/src/data"
 	"UniswapV2Solver/src/evts"
 	"fmt"
 	"math/big"
